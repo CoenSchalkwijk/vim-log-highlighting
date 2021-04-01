@@ -1,6 +1,7 @@
 " Vim syntax file
 " Language:         Generic log file
-" Maintainer:       MTDL9 <https://github.com/MTDL9>
+" Maintainer:       CoenSchalkwijk<https://github.com/CoenSchalkwijk>
+" Forked from:      MTDL9 <https://github.com/MTDL9>
 " Latest Revision:  2019-11-24
 
 if exists('b:current_syntax')
@@ -20,6 +21,12 @@ syn match logEmptyLines display '\*\{3,}'
 syn match logEmptyLines display '=\{3,}'
 syn match logEmptyLines display '- - '
 
+" Programming language elements
+"---------------------------------------------------------------------------
+syn keyword Exception Exception Traceback
+syn match Exceptions '\c[a-z]*exception' 
+syn match Errors '\c[a-z]*error' 
+syn match Errors '\cfail\(ed\)\?' 
 
 " Constants
 "---------------------------------------------------------------------------
@@ -30,7 +37,7 @@ syn match logBinaryNumber '\<0[bB][01]\+\>'
 syn match logFloatNumber  '\<\d.\d\+[eE]\?\>'
 
 syn keyword logBoolean    TRUE FALSE True False true false
-syn keyword logNull       NULL Null null
+syn keyword logNull       NULL Null null None
 
 syn region logString      start=/"/ end=/"/ end=/$/ skip=/\\./
 " Quoted strings, but no match on quotes like "don't", "plurals' elements"
@@ -47,7 +54,7 @@ syn match logDate '^20\d\{6}'
 syn match logDate '\(\(Mon\|Tue\|Wed\|Thu\|Fri\|Sat\|Sun\) \)\?\(Jan\|Feb\|Mar\|Apr\|May\|Jun\|Jul\|Aug\|Sep\|Oct\|Nov\|Dec\) [0-9 ]\d'
 
 " Matches 12:09:38 or 00:03:38.129Z or 01:32:12.102938 +0700
-syn match logTime '\d\{2}:\d\{2}:\d\{2}\(\.\d\{2,6}\)\?\(\s\?[-+]\d\{2,4}\|Z\)\?\>' nextgroup=logTimeZone,logSysColumns skipwhite
+syn match logTime '\d\{2}:\d\{2}:\d\{2}\([\.|,]\d\{2,6}\)\?\(\s\?[-+]\d\{2,4}\|Z\)\?\>' nextgroup=logTimeZone,logSysColumns skipwhite
 
 " Follows logTime, matches UTC or PDT 2019 or 2019 EDT
 syn match logTimeZone '[A-Z]\{2,5}\>\( \d\{4}\)\?' contained
@@ -93,15 +100,29 @@ syn match logXmlEntity       /\&\w\+;/
 syn keyword logLevelEmergency EMERGENCY EMERG
 syn keyword logLevelAlert ALERT
 syn keyword logLevelCritical CRITICAL CRIT FATAL
-syn keyword logLevelError ERROR ERR FAILURE SEVERE
-syn keyword logLevelWarning WARNING WARN
+syn keyword logLevelError ERROR ERR FAILURE SEVERE ERR
+syn keyword logLevelWarning WARNING WARN WAR
 syn keyword logLevelNotice NOTICE
-syn keyword logLevelInfo INFO
+syn keyword logLevelInfo INFO INF
 syn keyword logLevelDebug DEBUG FINE
 syn keyword logLevelTrace TRACE FINER FINEST
 
 
 " Highlight links
+" Check :help E669 for current/active formatting of group names.
+"
+" Suggested group names:
+" - Comment
+" - Constant, String, Character, Number, Boolean, Float
+" - Identifier, Function
+" - Statement, Conditional, Repeat, Label, Operator, Keyword, Exception
+" - PreProc, Include, Define, Macro, PreCondit
+" - Type, StorageClass, Structure, Typedef
+" - Special, SpecialChar, Tag, Delimiter, SpecialComment, Debug,
+" - Underlined
+" - Ignore
+" - Error
+" - Todo 
 "---------------------------------------------------------------------------
 hi def link logNumber Number
 hi def link logHexNumber Number
@@ -122,10 +143,10 @@ hi def link logMD5 Label
 hi def link logIPV4 Label
 hi def link logIPV6 ErrorMsg
 hi def link logMacAddress Label
-hi def link logFilePath Conditional
+hi def link logFilePath Typedef 
 
-hi def link logSysColumns Conditional
-hi def link logSysProcess Include
+hi def link logSysColumns Include
+hi def link logSysProcess Type
 
 hi def link logXmlHeader Function
 hi def link logXmlDoctype Function
@@ -140,13 +161,17 @@ hi def link logOperator Operator
 hi def link logBrackets Comment
 hi def link logEmptyLines Comment
 
+hi def link Exception WarningMsg
+hi def link Exceptions WarningMsg
+hi def link Errors WarningMsg
+
 hi def link logLevelEmergency ErrorMsg
 hi def link logLevelAlert ErrorMsg
 hi def link logLevelCritical ErrorMsg
 hi def link logLevelError ErrorMsg
 hi def link logLevelWarning WarningMsg
 hi def link logLevelNotice Character
-hi def link logLevelInfo Repeat
+hi def link logLevelInfo Identifier
 hi def link logLevelDebug Debug
 hi def link logLevelTrace Comment
 
